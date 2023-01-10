@@ -6,8 +6,8 @@ const port = 3636;
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
 
-// 数据库操作
-// title content id createTime
+// 数据库操作，表名字为blogs
+// title content id createTime authorId
 const sqlite = require('sqlite3').verbose();
 const db = new sqlite.Database('blogs.db');
 
@@ -30,12 +30,45 @@ app.post('/updateBlog',(req, res)=>{
     let sqlText;
     db.all(getIsExistText,(err, rows)=>{
         if(rows.length===0){
-            sqlText = `INSERT INTO blogs VALUES ("${blog.title}", "${blog.content}", "${blog.id}", "${blog.createTime}")`
+            sqlText = `INSERT INTO blogs VALUES ("${blog.title}", "${blog.content}", "${blog.id}", "${blog.createTime}","${blog.authorId}")`
         }else {
-            sqlText = `UPDATE blogs SET content = "${blog.content}" WHERE id = "${blog.id}"`;
+            sqlText = `UPDATE blogs SET content = "${blog.content}" title="${blog.title}" WHERE id = "${blog.id}"`;
         }
         db.run(sqlText)
         res.send(`blog has been sent with ${sqlText}`);
+    })
+})
+
+// 用户数据Data，表名称为userdata
+// 数据为 username password
+app.post('/register',(req, res)=>{
+    const data = req.body;
+    const getIsExistText = `SELECT * FROM userdata where username = "${data.username}"`;
+    db.all(getIsExistText,(err, rows)=>{
+        if(err){
+            console.log(err);
+        }
+        if(rows.length>0){
+            res.send(`username ${data.username} has been registered`);
+        }else {
+            const sqlText = `INSERT INTO userdata VALUES ("${data.username}","${data.password}")`;
+            db.run(sqlText);
+            res.send(`user data created with ${sqlText}`);
+        }
+    })
+})
+
+app.post('/login',(req, res)=>{
+    const data = req.body;
+    const getIsExistText = `SELECT * FROM userdata WHERE username ="${data.username}"`;
+    db.all(getIsExistText,(err,rows)=>{
+        if(rows.length===0){
+            res.send('invalid userId')
+        }else if(rows[0].password !== data.password){
+            res.send('wrong password!')
+        }else {
+            res.send('login successfully')
+        }
     })
 })
 
