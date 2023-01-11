@@ -1,10 +1,25 @@
 // express操作
-const express = require('express')
-const bodyParser = require('body-parser')
+const express = require('express');
+const bodyParser = require('body-parser');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+const {request} = require("express");
+
 const app = express();
 const port = 3636;
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
+app.use(cookieParser());
+app.use(session({
+    name: 'username',
+    secret: 'keyboard cat',
+    resave: false,
+    cookie:{
+        httpOnly: true,
+        maxAge: 1000*30,
+    }
+
+}))
 
 // 数据库操作，表名字为blogs
 // title content id createTime authorId
@@ -60,6 +75,7 @@ app.post('/register',(req, res)=>{
 
 app.post('/login',(req, res)=>{
     const data = req.body;
+    let session;
     const getIsExistText = `SELECT * FROM userdata WHERE username ="${data.username}"`;
     db.all(getIsExistText,(err,rows)=>{
         if(rows.length===0){
@@ -67,9 +83,15 @@ app.post('/login',(req, res)=>{
         }else if(rows[0].password !== data.password){
             res.send('wrong password!')
         }else {
+            session = req.session;
+            session.username = data.username;
             res.send('login successfully')
         }
     })
+})
+
+app.get('/getSession',(req, res)=>{
+    res.send(`用户id为：${req.session.username}`)
 })
 
 app.listen(port, () => {
