@@ -39,6 +39,14 @@ app.get('/getABlog', (req, res)=>{
     });
 })
 
+app.post('/getBlogByUsername',(req, res)=>{
+    const data = req.body;
+    const sqlText = `SELECT * FROM blogs WHERE authorId = ${data.username}`
+    db.all(sqlText,(err, rows)=>{
+        res.send(JSON.stringify(rows));
+    })
+})
+
 app.post('/updateBlog',(req, res)=>{
     const blog = req.body;
     const getIsExistText = `SELECT * FROM blogs where id = ${blog.id}`
