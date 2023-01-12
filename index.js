@@ -91,7 +91,7 @@ app.post('/login',(req, res)=>{
 })
 
 app.get('/getSession',(req, res)=>{
-    res.send(`用户id为：${req.session.username}`)
+    res.send(req.session.username);
 })
 
 app.listen(port, () => {
