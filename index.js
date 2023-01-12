@@ -41,7 +41,7 @@ app.get('/getABlog', (req, res)=>{
 
 app.post('/getBlogByUsername',(req, res)=>{
     const data = req.body;
-    const sqlText = `SELECT * FROM blogs WHERE authorId = ${data.username}`
+    const sqlText = `SELECT * FROM blogs WHERE authorId = "${data.username}"`
     db.all(sqlText,(err, rows)=>{
         res.send(JSON.stringify(rows));
     })
@@ -55,7 +55,7 @@ app.post('/updateBlog',(req, res)=>{
         if(rows.length===0){
             sqlText = `INSERT INTO blogs VALUES ("${blog.title}", "${blog.content}", "${blog.id}", "${blog.createTime}","${blog.authorId}")`
         }else {
-            sqlText = `UPDATE blogs SET content = "${blog.content}" title="${blog.title}" WHERE id = "${blog.id}"`;
+            sqlText = `UPDATE blogs SET content = "${blog.content}" ,title="${blog.title}" WHERE id = "${blog.id}"`;
         }
         db.run(sqlText)
         res.send(`blog has been sent with ${sqlText}`);
