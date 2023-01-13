@@ -21,6 +21,8 @@ app.use(session({
 
 }))
 
+const regexp = /"/gm;
+
 // 数据库操作，表名字为blogs
 // title content id createTime authorId
 const sqlite = require('sqlite3').verbose();
@@ -51,6 +53,8 @@ app.post('/updateBlog',(req, res)=>{
     const blog = req.body;
     const getIsExistText = `SELECT * FROM blogs where id = ${blog.id}`
     let sqlText;
+    blog.content = blog.content.replace(regexp,'/"');
+    blog.title = blog.title.replace(regexp,'/"');
     db.all(getIsExistText,(err, rows)=>{
         if(rows.length===0){
             sqlText = `INSERT INTO blogs VALUES ("${blog.title}", "${blog.content}", "${blog.id}", "${blog.createTime}","${blog.authorId}")`
