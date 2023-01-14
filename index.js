@@ -67,7 +67,7 @@ app.post('/updateBlog',(req, res)=>{
 
 app.post('/deleteBlog',(req, res)=>{
     const id = req.body.id;
-    const sqlText = `DELETE FROM blogs WHERE id="${id}`;
+    const sqlText = `DELETE FROM blogs WHERE id= "${id}"`;
     db.run(sqlText);
     res.send(`blog has been deleted successfully`);
 })
