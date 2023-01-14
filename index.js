@@ -34,18 +34,27 @@ app.get('/test',(req,res)=>{
 })
 
 app.get('/getABlog', (req, res)=>{
-    const sqlText = `SELECT * FROM blogs ORDER BY RANDOM() limit 1`
+    const sqlText = `SELECT * FROM blogs ORDER BY RANDOM() limit 1`;
+    const utf8 = new TextDecoder();
     let result;
     db.all(sqlText,(err, rows)=>{
         result = rows[0];
+        result.title = utf8.decode(result.title);
+        result.content = utf8.decode(result.content);
         res.send(JSON.stringify(result));
     });
 })
 
 app.post('/getBlogByUsername',(req, res)=>{
+    const utf8 = new TextDecoder();
     const data = req.body;
     const sqlText = `SELECT * FROM blogs WHERE authorId = "${data.username}"`
     db.all(sqlText,(err, rows)=>{
+        const size = rows.length;
+        for(let i= 0 ;i<size;i++){
+            rows[i].title = utf8.decode(rows[i].title);
+            rows[i].content = utf8.decode(rows[i].content);
+        }
         res.send(JSON.stringify(rows));
     })
 })
