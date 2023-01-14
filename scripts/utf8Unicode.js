@@ -13,7 +13,7 @@
  * @returns {string}
  * @constructor
  */
-export function BinaryShowAsUtf8 (bin) {
+ function BinaryShowAsUtf8 (bin) {
   // 再把字节集显示出来
   const decoder = new TextDecoder('utf-8') // 因为网页是utf8 最终用utf8展示出来
   return decoder.decode(new Uint8Array(bin))
@@ -31,7 +31,7 @@ export function BinaryShowAsUtf8 (bin) {
  * @param {boolean} BigEndian
  * @return {array}
  */
-export function UnicodeBinaryToCharBinary (unicodeBin, BigEndian = false) {
+ function UnicodeBinaryToCharBinary (unicodeBin, BigEndian = false) {
   let ret = []
   let i, j
   for (i = 0, j = 0; i < unicodeBin.length; i += 2) {
@@ -54,7 +54,7 @@ export function UnicodeBinaryToCharBinary (unicodeBin, BigEndian = false) {
  * 将一个字节拓展为多个字节(Unicode格式)
  * 等于以下函数
  * MultiByteToWideChar
- * The MultiByteToWideChar export function converts an ANSI string to a Unicode string.
+ * The MultiByteToWideChar  function converts an ANSI string to a Unicode string.
  * 举例:
  * "ex":  [0x65,0x78] ([101,120])   ->   [0x65,0x00,0x78,0x00] (little endian)
  * "严":  [0x4e25]    ([20005])     ->   [0x25, 0x4e]          (little endian)
@@ -63,7 +63,7 @@ export function UnicodeBinaryToCharBinary (unicodeBin, BigEndian = false) {
  * @returns {Array}
  * @constructor
  */
-export function CharBinaryToUnicodeBinary (bin, BigEndian = false) {
+ function CharBinaryToUnicodeBinary (bin, BigEndian = false) {
   const debug = window.isDebug
   let i, j
   let temp = []
@@ -127,7 +127,7 @@ export function CharBinaryToUnicodeBinary (bin, BigEndian = false) {
  * @param {boolean} BigEndian
  * @return {string}
  */
-export function UnicodeBinaryToStr (unicodeBin, BigEndian = false) {
+ function UnicodeBinaryToStr (unicodeBin, BigEndian = false) {
   const charArr = UnicodeBinaryToCharBinary(unicodeBin, BigEndian)
   let ret = ''
   for (let i = 0; i < charArr.length; i++) {
@@ -157,7 +157,7 @@ export function UnicodeBinaryToStr (unicodeBin, BigEndian = false) {
  * @returns {string}
  * @constructor
  */
-export function UnicodeStrToUtf8Str (str) {
+ function UnicodeStrToUtf8Str (str) {
   // 浏览器过来的都是utf8Str, 先转化为原始的Unicode字节集
   const unicodeBin = Utf8StrToUnicodeBinary(str) // 0x65 0x00 0x78 0x00 (unicodeBin)
   if (window.isDebug) console.log('UnicodeStrToUtf8Str', 'Unicode Binary', unicodeBin, unicodeBin.map(e => '0x' + e.toString(16)))
@@ -181,7 +181,7 @@ export function UnicodeStrToUtf8Str (str) {
  * @returns {string}
  * @constructor
  */
-export function Utf8StrToUnicodeStr (str) {
+ function Utf8StrToUnicodeStr (str) {
   // [0x65, 0x78] -> [0x65,0x00,0x78,0x00] -> [0x65, 0x78]
   const unicodeBin = Utf8StrToUnicodeBinary(str)
   if (window.isDebug) console.log('Utf8StrToUnicodeStr', 'Unicode Binary', unicodeBin)
@@ -198,7 +198,7 @@ export function Utf8StrToUnicodeStr (str) {
  * @returns {Array}
  * @constructor
  */
-export function Utf8StrToUnicodeBinary (strUtf8, BigEndian = false) {
+ function Utf8StrToUnicodeBinary (strUtf8, BigEndian = false) {
   const debug = window.isDebug
   const bin = Utf8StrToCharBinary(strUtf8)
   if (debug) console.log('Utf8StrToUnicodeBinary', 'Char Binary', bin, bin.map(e => '0x' + e.toString(16)))
@@ -213,7 +213,7 @@ export function Utf8StrToUnicodeBinary (strUtf8, BigEndian = false) {
  * @returns {array}
  * @constructor
  */
-export function Utf8StrToUtf8Binary (str) {
+ function Utf8StrToUtf8Binary (str) {
   return StrToBinary(str)
 }
 
@@ -225,7 +225,7 @@ export function Utf8StrToUtf8Binary (str) {
  * @returns str
  * @constructor
  */
-export function Utf8BinaryToUtf8Str (arr) {
+ function Utf8BinaryToUtf8Str (arr) {
   return BinaryToStr(arr)
 }
 
@@ -235,7 +235,7 @@ export function Utf8BinaryToUtf8Str (arr) {
  * @returns {Array}
  * @constructor
  */
-export function Utf8StrToUtf8BinaryJS (str) {
+ function Utf8StrToUtf8BinaryJS (str) {
   let c, s
   let enc = []
   let i = 0
@@ -278,7 +278,7 @@ export function Utf8StrToUtf8BinaryJS (str) {
  * @returns {Array}
  * @constructor
  */
-export function Utf8StrToCharBinary (strUtf8) {
+ function Utf8StrToCharBinary (strUtf8) {
   let temp = []
   for (let i = 0; i < strUtf8.length; i++) {
     temp[i] = strUtf8.charCodeAt(i)
@@ -293,7 +293,7 @@ export function Utf8StrToCharBinary (strUtf8) {
  * @returns {array}
  * @constructor
  */
-export function StrToBinary (str) {
+ function StrToBinary (str) {
   const encoder = new TextEncoder()
   return Array.from(encoder.encode(str))
 }
@@ -305,7 +305,7 @@ export function StrToBinary (str) {
  * @returns str
  * @constructor
  */
-export function BinaryToStr (arr) {
+ function BinaryToStr (arr) {
   const decoder = new TextDecoder()
   return decoder.decode(Uint8Array.from([0xe4, 0xb8, 0xa5]).buffer)
 }
@@ -318,7 +318,7 @@ export function BinaryToStr (arr) {
  * @param {string} splitChar encodeAll = true 时有效
  * @return {string}
  */
-export function Utf8ToUcs2 (strUtf8, encodeAll = false, splitChar = '%') {
+ function Utf8ToUcs2 (strUtf8, encodeAll = false, splitChar = '%') {
   const debug = window.isDebug
   let ret = ''
   const allowCharacter = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@*_+-./'.split('').map(e => e.charCodeAt(0))
@@ -358,7 +358,7 @@ export function Utf8ToUcs2 (strUtf8, encodeAll = false, splitChar = '%') {
  * @returns {string}
  * @constructor
  */
-export function Ucs2ToUtf8 (strUcs2) {
+exports.Ucs2ToUtf8 = function Ucs2ToUtf8 (strUcs2) {
   const debug = window.isDebug
   const s = strUcs2.toString()
   const n = s.length
