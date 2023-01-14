@@ -17,9 +17,10 @@ app.use(session({
     cookie:{
         httpOnly: true,
         maxAge: 1000*30,
-    }
-
+    },
+    saveUninitialized: true,
 }))
+const rawParser = bodyParser.raw();
 
 const regexp = /"/gm;
 
@@ -49,7 +50,7 @@ app.post('/getBlogByUsername',(req, res)=>{
     })
 })
 
-app.post('/updateBlog',(req, res)=>{
+app.post('/updateBlog',rawParser,(req, res)=>{
     const blog = req.body;
     const getIsExistText = `SELECT * FROM blogs where id = ${blog.id}`
     let sqlText;
@@ -62,6 +63,13 @@ app.post('/updateBlog',(req, res)=>{
         db.run(sqlText)
         res.send(`blog has been sent with ${sqlText}`);
     })
+})
+
+app.post('/deleteBlog',(req, res)=>{
+    const id = req.body.id;
+    const sqlText = `DELETE FROM blogs WHERE id="${id}`;
+    db.run(sqlText);
+    res.send(`blog has been deleted successfully`);
 })
 
 // 用户数据Data，表名称为userdata
