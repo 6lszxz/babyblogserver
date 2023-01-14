@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const {request} = require("express");
+const encode = require('./scripts/utf8Unicode');
 
 const app = express();
 const port = 3636;
@@ -35,25 +36,23 @@ app.get('/test',(req,res)=>{
 
 app.get('/getABlog', (req, res)=>{
     const sqlText = `SELECT * FROM blogs ORDER BY RANDOM() limit 1`;
-    const utf8 = new TextDecoder();
     let result;
     db.all(sqlText,(err, rows)=>{
         result = rows[0];
-        result.title = utf8.decode(result.title);
-        result.content = utf8.decode(result.content);
+        result.title = encode.Ucs2ToUtf8(result.title);
+        result.content = encode.Ucs2ToUtf8(result.content);
         res.send(JSON.stringify(result));
     });
 })
 
 app.post('/getBlogByUsername',(req, res)=>{
-    const utf8 = new TextDecoder();
     const data = req.body;
     const sqlText = `SELECT * FROM blogs WHERE authorId = "${data.username}"`
     db.all(sqlText,(err, rows)=>{
         const size = rows.length;
         for(let i= 0 ;i<size;i++){
-            rows[i].title = utf8.decode(rows[i].title);
-            rows[i].content = utf8.decode(rows[i].content);
+            rows[i].title = encode.Ucs2ToUtf8(rows[i].title);
+            rows[i].content = encode.Ucs2ToUtf8(rows[i].content);
         }
         res.send(JSON.stringify(rows));
     })
