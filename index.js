@@ -20,7 +20,7 @@ app.use(session({
     },
     saveUninitialized: true,
 }))
-const rawParser = bodyParser.raw();
+// const rawParser = bodyParser.raw();
 
 const regexp = /"/gm;
 
@@ -50,7 +50,7 @@ app.post('/getBlogByUsername',(req, res)=>{
     })
 })
 
-app.post('/updateBlog',rawParser,(req, res)=>{
+app.post('/updateBlog',(req, res)=>{
     const blog = req.body;
     const getIsExistText = `SELECT * FROM blogs where id = ${blog.id}`
     let sqlText;
