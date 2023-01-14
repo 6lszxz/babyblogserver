@@ -4,7 +4,6 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const {request} = require("express");
-const encode = require('./scripts/utf8Unicode');
 
 const app = express();
 const port = 3636;
@@ -30,6 +29,10 @@ const regexp = /"/gm;
 const sqlite = require('sqlite3').verbose();
 const db = new sqlite.Database('blogs.db');
 
+function decodeUnicode(str) {
+    return unescape(str.replace(/\\u/gi, '%u'))
+ }
+
 app.get('/test',(req,res)=>{
     res.send('111');
 })
@@ -39,8 +42,8 @@ app.get('/getABlog', (req, res)=>{
     let result;
     db.all(sqlText,(err, rows)=>{
         result = rows[0];
-        result.title = encode.Ucs2ToUtf8(result.title);
-        result.content = encode.Ucs2ToUtf8(result.content);
+        result.title = decodeUnicode(result.title);
+        result.content = decodeUnicode(result.content);
         res.send(JSON.stringify(result));
     });
 })
@@ -51,8 +54,8 @@ app.post('/getBlogByUsername',(req, res)=>{
     db.all(sqlText,(err, rows)=>{
         const size = rows.length;
         for(let i= 0 ;i<size;i++){
-            rows[i].title = encode.Ucs2ToUtf8(rows[i].title);
-            rows[i].content = encode.Ucs2ToUtf8(rows[i].content);
+            rows[i].title = decodeUnicode(rows[i].title);
+            rows[i].content = decodeUnicode(rows[i].content);
         }
         res.send(JSON.stringify(rows));
     })
